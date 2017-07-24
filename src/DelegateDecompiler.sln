@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26430.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DelegateDecompiler", "DelegateDecompiler\DelegateDecompiler.csproj", "{ACAA8CEE-BDD0-4B05-8879-A2DB9F2CC661}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DelegateDecompiler.Sandbox", "DelegateDecompiler.Sandbox\DelegateDecompiler.Sandbox.csproj", "{2EA146F5-710D-4BB6-B583-EC5E71A95AAE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{ACAA8CEE-BDD0-4B05-8879-A2DB9F2CC661}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ACAA8CEE-BDD0-4B05-8879-A2DB9F2CC661}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ACAA8CEE-BDD0-4B05-8879-A2DB9F2CC661}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ACAA8CEE-BDD0-4B05-8879-A2DB9F2CC661}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2EA146F5-710D-4BB6-B583-EC5E71A95AAE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2EA146F5-710D-4BB6-B583-EC5E71A95AAE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2EA146F5-710D-4BB6-B583-EC5E71A95AAE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2EA146F5-710D-4BB6-B583-EC5E71A95AAE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
