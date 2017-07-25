@@ -12,7 +12,7 @@ using System.Linq.Expressions;
 /// property accessor methods, or static operator methods)
 /// to semantically more correct expression tree nodes.
 /// </summary>
-public sealed class SpecialNameMethodReplacer : ExpressionVisitor
+public sealed class SpecialNameMethodReplacer : DecompilationExpressionVisitor
 {
     protected override Expression VisitMethodCall(MethodCallExpression node)
     {
@@ -46,6 +46,24 @@ public sealed class SpecialNameMethodReplacer : ExpressionVisitor
                 return Expression.Assign(
                     Expression.Property(Visit(node.Object), propertyName),
                     Visit(node.Arguments.Last()));
+            }
+            else if (methodName.StartsWith("add_"))
+            {
+                var eventName = methodName.Substring("add_".Length);
+                Debug.Assert(node.Arguments.Count == 1);
+                return new EventAddExpression(
+                    Visit(node.Object),
+                    node.Object.Type.GetEvent(eventName),
+                    Visit(node.Arguments[0]));
+            }
+            else if (methodName.StartsWith("remove_"))
+            {
+                var eventName = methodName.Substring("remove_".Length);
+                Debug.Assert(node.Arguments.Count == 1);
+                return new EventRemoveExpression(
+                    Visit(node.Object),
+                    node.Object.Type.GetEvent(eventName),
+                    Visit(node.Arguments[0]));
             }
         }
 

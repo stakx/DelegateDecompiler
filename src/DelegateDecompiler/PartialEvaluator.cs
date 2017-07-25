@@ -12,7 +12,7 @@ using System.Reflection;
 /// reduce method calls to their return values, etc. Expressions
 /// that involve a lambda parameter cannot are irreducible.
 /// </summary>
-public sealed class PartialEvaluator : ExpressionVisitor
+public sealed class PartialEvaluator : DecompilationExpressionVisitor
 {
     protected override Expression VisitMember(MemberExpression node)
     {
