@@ -32,10 +32,21 @@ internal static partial class InstructionReader
             var opCode = (OpCode)il[ip];
             ++ip;
 
+            // check whether this op-code takes up two bytes:
+            if (opCode == (OpCode)0xfe)
+            {
+                opCode = (OpCode)(((byte)opCode << 8) | il[ip]);
+                ++ip;
+            }
+
             switch (opCode)
             {
                 case OpCode.add:
                     sink.add();
+                    break;
+
+                case OpCode.and:
+                    sink.and();
                     break;
 
                 case OpCode.box:
@@ -54,6 +65,22 @@ internal static partial class InstructionReader
                     metadataToken = BitConverter.ToInt32(il, ip);
                     ip += 4;
                     sink.callvirt(module.ResolveMethod(metadataToken));
+                    break;
+
+                case OpCode.ceq:
+                    sink.ceq();
+                    break;
+
+                case OpCode.cgt:
+                    sink.cgt();
+                    break;
+
+                case OpCode.cgt_un:
+                    sink.cgt_un();
+                    break;
+
+                case OpCode.clt:
+                    sink.clt();
                     break;
 
                 case OpCode.conv_i1:
@@ -102,6 +129,12 @@ internal static partial class InstructionReader
 
                 case OpCode.dup:
                     sink.dup();
+                    break;
+
+                case OpCode.isinst:
+                    metadataToken = BitConverter.ToInt32(il, ip);
+                    ip += 4;
+                    sink.isinst(module.ResolveType(metadataToken));
                     break;
 
                 case OpCode.ldarg_0:
@@ -212,6 +245,10 @@ internal static partial class InstructionReader
                     sink.ldflda((FieldInfo)module.ResolveField(metadataToken));
                     break;
 
+                case OpCode.ldlen:
+                    sink.ldlen();
+                    break;
+
                 case OpCode.ldloca_s:
                     byteValue = il[ip];
                     ++ip;
@@ -254,6 +291,10 @@ internal static partial class InstructionReader
                     sink.mul();
                     break;
 
+                case OpCode.neg:
+                    sink.neg();
+                    break;
+
                 case OpCode.newarr:
                     metadataToken = BitConverter.ToInt32(il, ip);
                     ip += 4;
@@ -268,6 +309,18 @@ internal static partial class InstructionReader
 
                 case OpCode.nop:
                     sink.nop();
+                    break;
+
+                case OpCode.not:
+                    sink.not();
+                    break;
+
+                case OpCode.or:
+                    sink.or();
+                    break;
+
+                case OpCode.pop:
+                    sink.pop();
                     break;
 
                 case OpCode.rem:

@@ -60,6 +60,8 @@ internal sealed class DecompilationContext : InstructionSink
 
     public override void add() => this.OnAnyBinary(ExpressionType.Add);
 
+    public override void and() => this.OnAnyBinary(ExpressionType.And);
+
     public override void box(Type type)
     {
         this.stack.Push(Expression.Convert(this.stack.Pop(), typeof(object)));
@@ -93,6 +95,29 @@ internal sealed class DecompilationContext : InstructionSink
         this.stack.Push(Expression.Call(targetInstance, target, arguments));
     }
 
+    public override void ceq() => this.OnAnyBinary(ExpressionType.Equal);
+
+    public override void cgt() => this.OnAnyBinary(ExpressionType.GreaterThan);
+
+    public override void cgt_un()
+    {
+        var right = this.stack.Pop();
+        var left = this.stack.Pop();
+        if (!left.Type.IsValueType && right is ConstantExpression ce && ce.Value == null)
+        {
+            // `!= null` comparisons are modelled in IL as `> null`.
+            // (This is a special case. IL does not have a general != comparison instruction.)
+            this.stack.Push(Expression.NotEqual(left, right));
+        }
+        else
+        {
+            // TODO: there should probably be a difference to a simple `cgt`.
+            this.stack.Push(Expression.GreaterThan(left, right));
+        }
+    }
+
+    public override void clt() => this.OnAnyBinary(ExpressionType.LessThan);
+
     public override void conv_i1() => this.OnAnyConv(typeof(sbyte));
 
     public override void conv_i2() => this.OnAnyConv(typeof(short));
@@ -124,6 +149,15 @@ internal sealed class DecompilationContext : InstructionSink
     public override void dup()
     {
         this.stack.Push(this.stack.Peek());
+    }
+
+    public override void isinst(Type type)
+    {
+        // TODO: Is this correct?
+        // Should the popped value be implicitly converted before or during the type check?
+        // Should this push an integer onto the stack?
+        var value = this.stack.Pop();
+        this.stack.Push(Expression.Constant(type.IsAssignableFrom(value.Type), typeof(bool)));
     }
 
     public override void ldarg_0()
@@ -224,6 +258,11 @@ internal sealed class DecompilationContext : InstructionSink
         this.stack.Push(Expression.MakeMemberAccess(instance, field));
     }
 
+    public override void ldlen()
+    {
+        this.stack.Push(Expression.ArrayLength(this.stack.Pop()));
+    }
+
     public override void ldloc_0()
         => this.OnAnyLdloc(0);
 
@@ -261,6 +300,8 @@ internal sealed class DecompilationContext : InstructionSink
 
     public override void mul() => this.OnAnyBinary(ExpressionType.Multiply);
 
+    public override void neg() => this.OnAnyUnary(ExpressionType.Negate);
+
     public override void newarr(Type type)
     {
         var length = this.stack.Pop();
@@ -288,6 +329,15 @@ internal sealed class DecompilationContext : InstructionSink
         this.stack.Push(Expression.New(constructor, arguments));
     }
 
+    public override void not() => this.OnAnyUnary(ExpressionType.Not);
+
+    public override void or() => this.OnAnyBinary(ExpressionType.Or);
+
+    public override void pop()
+    {
+        this.stack.Pop();
+    }
+
     public override void rem() => this.OnAnyBinary(ExpressionType.Modulo);
 
     public override void ret()
@@ -312,10 +362,21 @@ internal sealed class DecompilationContext : InstructionSink
 
     public override void sub() => this.OnAnyBinary(ExpressionType.Subtract);
 
+    private void OnAnyUnary(ExpressionType type)
+    {
+        var value = this.stack.Pop();
+        this.stack.Push(Expression.MakeUnary(type, value, null));
+    }
+
     private void OnAnyBinary(ExpressionType type)
     {
         var right = this.stack.Pop();
         var left = this.stack.Pop();
+        // TODO: need to perform type coercion due to limited type set
+        // used in the VES execution environment. For example, the
+        // current code won't work for simple expressions such as
+        // `!someBoolean` because that gets translated to IL roughly as
+        // `someBoolean == 0`.
         this.stack.Push(Expression.MakeBinary(type, left, right));
     }
 

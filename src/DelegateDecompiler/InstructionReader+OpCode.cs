@@ -8,12 +8,17 @@ partial class InstructionReader
     /// <summary>
     /// Recognized intermediate language (IL) op-codes.
     /// </summary>
-    private enum OpCode : short
+    private enum OpCode : ushort
     {
         add = 0x58,
+        and = 0x5f,
         box = 0x8c,
         call = 0x28,
         callvirt = 0x6f,
+        ceq = 0xfe01,
+        cgt = 0xfe02,
+        cgt_un = 0xfe03,
+        clt = 0xfe04,
         conv_i1 = 0x67,
         conv_i2 = 0x68,
         conv_i4 = 0x69,
@@ -26,6 +31,7 @@ partial class InstructionReader
         conv_u8 = 0x6e,
         div = 0x5b,
         dup = 0x25,
+        isinst = 0x75,
         ldarg_0 = 0x02,
         ldarg_1 = 0x03,
         ldarg_2 = 0x04,
@@ -49,6 +55,7 @@ partial class InstructionReader
         ldelem_ref = 0x9a,
         ldfld = 0x7b,
         ldflda = 0x7c,
+        ldlen = 0x8e,
         ldloc_0 = 0x06,
         ldloc_1 = 0x07,
         ldloc_2 = 0x08,
@@ -58,9 +65,13 @@ partial class InstructionReader
         ldsfld = 0x7e,
         ldstr = 0x72,
         mul = 0x5a,
+        neg = 0x65,
         newarr = 0x8d,
         newobj = 0x73,
         nop = 0x00,
+        not = 0x66,
+        or = 0x60,
+        pop = 0x26,
         rem = 0x5d,
         ret = 0x2a,
         stloc_0 = 0x0a,

@@ -12,9 +12,14 @@ using System.Reflection;
 internal abstract class InstructionSink
 {
     public virtual void add() { }
+    public virtual void and() { }
     public virtual void box(Type type) { }
     public virtual void call(MethodBase method) { }
     public virtual void callvirt(MethodBase method) { }
+    public virtual void ceq() { }
+    public virtual void cgt() { }
+    public virtual void cgt_un() { }
+    public virtual void clt() { }
     public virtual void conv_i1() { }
     public virtual void conv_i2() { }
     public virtual void conv_i4() { }
@@ -27,6 +32,7 @@ internal abstract class InstructionSink
     public virtual void conv_u8() { }
     public virtual void div() { }
     public virtual void dup() { }
+    public virtual void isinst(Type type) { }
     public virtual void ldarg_0() { }
     public virtual void ldarg_1() { }
     public virtual void ldarg_2() { }
@@ -50,6 +56,7 @@ internal abstract class InstructionSink
     public virtual void ldelem_ref() { }
     public virtual void ldfld(FieldInfo field) { }
     public virtual void ldflda(FieldInfo field) { }
+    public virtual void ldlen() { }
     public virtual void ldloc_0() { }
     public virtual void ldloc_1() { }
     public virtual void ldloc_2() { }
@@ -59,9 +66,13 @@ internal abstract class InstructionSink
     public virtual void ldsfld(FieldInfo field) { }
     public virtual void ldstr(string value) { }
     public virtual void mul() { }
+    public virtual void neg() { }
     public virtual void newarr(Type type) { }
     public virtual void newobj(ConstructorInfo constructor) { }
     public virtual void nop() { }
+    public virtual void not() { }
+    public virtual void or() { }
+    public virtual void pop() { }
     public virtual void rem() { }
     public virtual void ret() { }
     public virtual void stloc_0() { }
