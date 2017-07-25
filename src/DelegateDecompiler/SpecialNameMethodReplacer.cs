@@ -3,9 +3,11 @@
 // License available at https://github.com/stakx/DelegateDecompiler/blob/develop/LICENSE.md.
 #endregion
 
+using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 
 /// <summary>
 /// Replaces invocations of specially named methods (such as
@@ -34,15 +36,41 @@ public sealed class SpecialNameMethodReplacer : DecompilationExpressionVisitor
             }
             else if (methodName.StartsWith("get_"))
             {
-                // TODO: support multi-parameter properties and indexers
                 var propertyName = methodName.Substring("get_".Length);
+                if (node.Arguments.Count > 0)
+                {
+                    // Get accessors with arguments could be either indexers,
+                    // or non-C# properties.
+                    var defaultMemberAttr = (DefaultMemberAttribute)Attribute.GetCustomAttribute(method.DeclaringType, typeof(DefaultMemberAttribute));
+                    if (defaultMemberAttr?.MemberName == propertyName)
+                    {
+                        // yes, it's an indexer!
+                        return Expression.MakeIndex(Visit(node.Object), method.DeclaringType.GetProperty(propertyName), node.Arguments.Select(a => Visit(a)));
+                    }
+                    // TODO: support properties with arguments (I think VB.NET has those)
+                }
+
                 return Expression.Property(Visit(node.Object), propertyName);
             }
             else if (methodName.StartsWith("set_"))
             {
                 // TODO: support multi-parameter properties and indexers
                 var propertyName = methodName.Substring("set_".Length);
-                Debug.Assert(node.Arguments.Count == 1);
+                if (node.Arguments.Count > 0)
+                {
+                    // Get accessors with arguments could be either indexers,
+                    // or non-C# properties.
+                    var defaultMemberAttr = (DefaultMemberAttribute)Attribute.GetCustomAttribute(method.DeclaringType, typeof(DefaultMemberAttribute));
+                    if (defaultMemberAttr?.MemberName == propertyName)
+                    {
+                        // yes, it's an indexer!
+                        return Expression.Assign(
+                            Expression.MakeIndex(Visit(node.Object), method.DeclaringType.GetProperty(propertyName), node.Arguments.Take(node.Arguments.Count - 1).Select(a => Visit(a))),
+                            Visit(node.Arguments.Last()));
+                    }
+                    // TODO: support properties with arguments (I think VB.NET has those)
+                }
+
                 return Expression.Assign(
                     Expression.Property(Visit(node.Object), propertyName),
                     Visit(node.Arguments.Last()));
