@@ -3,8 +3,11 @@
 // License available at https://github.com/stakx/DelegateDecompiler/blob/develop/LICENSE.md.
 #endregion
 
-partial class DelegateDecompiler
+partial class InstructionReader
 {
+    /// <summary>
+    /// Recognized intermediate language (IL) op-codes.
+    /// </summary>
     private enum OpCode : short
     {
         add = 0x58,
